@@ -14,3 +14,4 @@ select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-q"
+filterwarnings = ["ignore:Using `httpx` with `starlette.testclient`"]
