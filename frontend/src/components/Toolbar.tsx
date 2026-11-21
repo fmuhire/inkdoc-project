@@ -12,6 +12,21 @@ import {
   upperCase,
 } from "../lib/text";
 
+// The async Clipboard API is HTTPS-only; plain HTTP needs the legacy copy command.
+async function writeClipboard(value: string): Promise<void> {
+  if (navigator.clipboard) return navigator.clipboard.writeText(value);
+  const area = document.createElement("textarea");
+  area.value = value;
+  area.setAttribute("readonly", "");
+  area.style.position = "fixed";
+  area.style.opacity = "0";
+  document.body.append(area);
+  area.select();
+  const copied = document.execCommand("copy");
+  area.remove();
+  if (!copied) throw new Error("Copy command failed");
+}
+
 interface Props {
   text: string;
   onTransform: (next: string, label: string) => void;
@@ -36,7 +51,7 @@ export function Toolbar({ text, onTransform, onUndo }: Props) {
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(toPlainText(text));
+      await writeClipboard(toPlainText(text));
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {

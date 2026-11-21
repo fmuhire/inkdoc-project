@@ -11,7 +11,7 @@ WorkingDirectory=/opt/inkdoc/backend
 ExecStart=/opt/inkdoc/backend/.venv/bin/gunicorn app.main:app \
     --worker-class uvicorn_worker.UvicornWorker --workers 1 \
     --bind 127.0.0.1:8000 --timeout 180 --graceful-timeout 30 \
-    --access-logfile -
+    --access-logfile - --no-control-socket
 Restart=on-failure
 RestartSec=3
 NoNewPrivileges=true

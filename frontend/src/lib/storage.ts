@@ -20,6 +20,11 @@ export interface HistoryDoc {
 }
 
 const KEY = "inkdoc:history";
+
+// crypto.randomUUID only exists on HTTPS/localhost, and the site is also served over plain HTTP.
+export function createId(): string {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
 const listeners = new Set<() => void>();
 let snapshot: HistoryDoc[] | null = null;
 

@@ -5,7 +5,7 @@ import { Dropzone } from "../components/Dropzone";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { useToast } from "../hooks/useToast";
 import { ApiError, describeError, FATAL_CODES, recognize, toApiError } from "../lib/api";
-import { addDoc, rememberImages } from "../lib/storage";
+import { addDoc, createId, rememberImages } from "../lib/storage";
 import { countWords, joinPages } from "../lib/text";
 
 const MAX_FILES = 10;
@@ -79,7 +79,7 @@ export function Convert() {
     const room = MAX_FILES - items.length;
     if (accepted.length > room) problems.push(`Only ${MAX_FILES} pages per document; ${accepted.length - room} skipped.`);
     const added = accepted.slice(0, Math.max(room, 0)).map((file) => ({
-      id: crypto.randomUUID(),
+      id: createId(),
       file,
       url: URL.createObjectURL(file),
       status: "queued" as Status,
@@ -142,7 +142,7 @@ export function Convert() {
     const failed = queue.length - succeeded.length;
     const text = joinPages(succeeded.map((s) => s.text));
     const now = new Date().toISOString();
-    const id = crypto.randomUUID();
+    const id = createId();
     const saved = addDoc({
       id,
       title: `Notes ${new Date().toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}`,
