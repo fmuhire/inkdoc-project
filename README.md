@@ -43,7 +43,6 @@ Many people still think best with a pen: students taking lecture notes, research
 | --- | --- | --- |
 | ![Home](docs/screenshots/home.png) | ![Editor](docs/screenshots/editor.png) | ![History](docs/screenshots/history.png) |
 
-_Placeholders: add screenshots to `docs/screenshots/`._
 
 ## Architecture
 
