@@ -21,7 +21,9 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
 
-  useEffect(() => setMenuOpen(false), [pathname]);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);

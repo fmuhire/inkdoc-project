@@ -24,7 +24,7 @@ fi
 haproxy -c -q -f /tmp/inkdoc.haproxy
 install -m 640 -o root -g haproxy /tmp/inkdoc.haproxy /etc/haproxy/haproxy.cfg
 shred -u /tmp/inkdoc.haproxy
-systemctl enable haproxy >/dev/null
+systemctl enable haproxy >/dev/null 2>&1
 systemctl reload-or-restart haproxy
 echo "HAProxy running"
 REMOTE

@@ -135,7 +135,7 @@ function DocumentEditor({ doc }: { doc: HistoryDoc }) {
                   type="button"
                   aria-pressed={view === mode}
                   onClick={() => setView(mode)}
-                  className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize ${
+                  className={`rounded-md px-3 py-1.5 text-xs font-medium ${
                     view === mode ? "bg-brand-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                   }`}
                 >

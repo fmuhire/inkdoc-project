@@ -38,14 +38,14 @@ shred -u /tmp/inkdoc.env
 
 install -m 644 /tmp/inkdoc.service /etc/systemd/system/inkdoc.service
 systemctl daemon-reload
-systemctl enable inkdoc >/dev/null
+systemctl enable inkdoc >/dev/null 2>&1
 
 tar -czf "/root/nginx-backup-$stamp.tgz" -C /etc nginx
 install -m 644 /tmp/inkdoc.nginx /etc/nginx/sites-available/inkdoc
 find /etc/nginx/sites-enabled -mindepth 1 ! -name inkdoc -delete
 ln -sfn /etc/nginx/sites-available/inkdoc /etc/nginx/sites-enabled/inkdoc
 nginx -t -q
-systemctl enable --now nginx >/dev/null
+systemctl enable --now nginx >/dev/null 2>&1
 systemctl reload nginx
 rm -f /tmp/inkdoc.nginx /tmp/inkdoc.service
 echo "nginx config backed up to /root/nginx-backup-$stamp.tgz"
