@@ -1,4 +1,3 @@
-import { Camera, Upload } from "lucide-react";
 import { useRef, useState, type DragEvent } from "react";
 
 interface Props {
@@ -30,27 +29,22 @@ export function Dropzone({ onFiles, disabled = false, hint }: Props) {
       }}
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
-      className={`flex flex-col items-center rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-colors ${
-        dragging
-          ? "border-brand-500 bg-brand-50 dark:bg-brand-500/10"
-          : "border-slate-300 bg-white dark:border-slate-700 dark:bg-slate-900"
-      } ${disabled ? "opacity-60" : ""}`}
+      className={`sheet ruled relative overflow-hidden px-6 py-14 pl-16 transition-[outline-color] sm:pl-20 ${
+        dragging ? "outline-2 -outline-offset-8 outline-dashed outline-accent" : "outline-transparent"
+      } ${disabled ? "opacity-50" : ""}`}
     >
-      <div className="mb-4 rounded-full bg-brand-50 p-3 text-brand-600 dark:bg-brand-500/10 dark:text-brand-200">
-        <Upload className="size-7" aria-hidden />
-      </div>
-      <p className="text-base font-semibold">Drop photos of handwritten pages here</p>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{hint}</p>
-      <div className="mt-6 flex flex-wrap justify-center gap-3">
+      <span className="absolute inset-y-0 left-10 w-px bg-margin sm:left-14" aria-hidden />
+      <p className="font-hand text-3xl leading-8 text-ink-2 sm:text-4xl">{dragging ? "Let go to add them…" : "Drop your pages here"}</p>
+      <p className="mt-2 max-w-md text-sm leading-8 text-ink-2">Photos of handwritten pages, in reading order. Good light and a flat page help the most.</p>
+      <div className="mt-6 flex flex-wrap gap-3">
         <button type="button" className="btn-primary" onClick={() => fileInput.current?.click()} disabled={disabled}>
-          <Upload className="size-4" aria-hidden />
           Choose files
         </button>
-        <button type="button" className="btn-secondary" onClick={() => cameraInput.current?.click()} disabled={disabled}>
-          <Camera className="size-4" aria-hidden />
+        <button type="button" className="btn-secondary bg-sheet" onClick={() => cameraInput.current?.click()} disabled={disabled}>
           Take photo
         </button>
       </div>
+      <p className="meta mt-5 leading-8">{hint}</p>
       <input
         ref={fileInput}
         type="file"

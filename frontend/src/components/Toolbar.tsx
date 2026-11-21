@@ -1,4 +1,3 @@
-import { CaseSensitive, Check, Copy, Replace, Search, Undo2, WandSparkles } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "../hooks/useToast";
 import {
@@ -59,17 +58,13 @@ export function Toolbar({ text, onTransform, onUndo }: Props) {
     }
   };
 
-  const runReplace = () => {
-    onTransform(replaceAll(text, find, replacement, caseSensitive), `Replaced ${matches} match${matches === 1 ? "" : "es"}`);
-  };
-
   return (
-    <section className="card space-y-4 p-4" aria-label="Editing tools">
+    <section className="border-y border-rule py-4" aria-label="Editing tools">
       <form
         className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]"
         onSubmit={(event) => {
           event.preventDefault();
-          if (matches) runReplace();
+          if (matches) onTransform(replaceAll(text, find, replacement, caseSensitive), `Replaced ${matches} match${matches === 1 ? "" : "es"}`);
         }}
       >
         <div>
@@ -77,9 +72,8 @@ export function Toolbar({ text, onTransform, onUndo }: Props) {
             Find
           </label>
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" aria-hidden />
-            <input id="find" className="input pl-9 pr-20" value={find} onChange={(e) => setFind(e.target.value)} placeholder="Search text" />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500" aria-live="polite">
+            <input id="find" className="input pr-20" value={find} onChange={(e) => setFind(e.target.value)} placeholder="Word or phrase" />
+            <span className="meta absolute top-1/2 right-3 -translate-y-1/2" aria-live="polite">
               {find && `${matches} found`}
             </span>
           </div>
@@ -93,38 +87,34 @@ export function Toolbar({ text, onTransform, onUndo }: Props) {
         <div className="flex items-end gap-2">
           <button
             type="button"
-            className={`btn-icon border ${caseSensitive ? "border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-200" : "border-slate-300 text-slate-600 dark:border-slate-700 dark:text-slate-300"}`}
+            className={`btn h-[38px] border px-3 font-mono text-xs ${caseSensitive ? "border-ink bg-ink text-paper" : "border-rule text-ink-2 hover:border-ink"}`}
             onClick={() => setCaseSensitive((c) => !c)}
             aria-pressed={caseSensitive}
             aria-label="Match case"
             title="Match case"
           >
-            <CaseSensitive className="size-5" aria-hidden />
+            Aa
           </button>
-          <button type="submit" className="btn-secondary flex-1 whitespace-nowrap" disabled={!matches}>
-            <Replace className="size-4" aria-hidden />
+          <button type="submit" className="btn-secondary h-[38px] flex-1 whitespace-nowrap" disabled={!matches}>
             Replace all
           </button>
         </div>
       </form>
 
-      <div className="flex flex-wrap items-center gap-2 border-t border-slate-200 pt-4 dark:border-slate-800">
-        <WandSparkles className="size-4 text-slate-400" aria-hidden />
+      <div className="mt-4 flex flex-wrap items-center gap-x-1 gap-y-2">
+        <span className="label mr-2 mb-0">Clean up</span>
         {CLEANUPS.map(({ label, run }) => (
-          <button key={label} type="button" className="btn-secondary px-2.5 py-1.5 text-xs" onClick={() => onTransform(run(text), label)}>
+          <button key={label} type="button" className="btn-ghost py-1.5 text-[13px]" onClick={() => onTransform(run(text), label)}>
             {label}
           </button>
         ))}
-        <div className="ml-auto flex gap-2">
-          <button type="button" className="btn-ghost px-2.5 py-1.5 text-xs" onClick={onUndo ?? undefined} disabled={!onUndo}>
-            <Undo2 className="size-4" aria-hidden />
-            Undo
-          </button>
-          <button type="button" className="btn-ghost px-2.5 py-1.5 text-xs" onClick={copy}>
-            {copied ? <Check className="size-4 text-emerald-600" aria-hidden /> : <Copy className="size-4" aria-hidden />}
-            {copied ? "Copied" : "Copy text"}
-          </button>
-        </div>
+        <span className="mx-1 hidden h-4 w-px bg-rule sm:block" aria-hidden />
+        <button type="button" className="btn-ghost py-1.5 text-[13px]" onClick={onUndo ?? undefined} disabled={!onUndo}>
+          Undo
+        </button>
+        <button type="button" className="btn-ghost ml-auto py-1.5 text-[13px]" onClick={copy}>
+          {copied ? "Copied" : "Copy text"}
+        </button>
       </div>
     </section>
   );

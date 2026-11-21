@@ -1,4 +1,3 @@
-import { ChevronLeft, ChevronRight, CircleAlert, CircleCheck, LoaderCircle, ScanText, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dropzone } from "../components/Dropzone";
@@ -28,29 +27,17 @@ function rejectionReason(file: File): string | null {
   return null;
 }
 
-function StatusBadge({ item }: { item: Item }) {
-  switch (item.status) {
-    case "processing":
-      return (
-        <span className="badge bg-brand-600 text-white">
-          <LoaderCircle className="size-3 animate-spin" aria-hidden /> Reading
-        </span>
-      );
-    case "done":
-      return (
-        <span className="badge bg-emerald-600 text-white">
-          <CircleCheck className="size-3" aria-hidden /> Done
-        </span>
-      );
-    case "error":
-      return (
-        <span className="badge bg-red-600 text-white">
-          <CircleAlert className="size-3" aria-hidden /> Failed
-        </span>
-      );
-    default:
-      return null;
-  }
+const STATUS_LABEL: Record<Status, { text: string; className: string } | null> = {
+  queued: null,
+  processing: { text: "Reading…", className: "bg-ink text-paper animate-shimmer" },
+  done: { text: "Done", className: "bg-ok text-sheet" },
+  error: { text: "Failed", className: "bg-accent text-on-accent" },
+};
+
+function StatusLabel({ status }: { status: Status }) {
+  const label = STATUS_LABEL[status];
+  if (!label) return null;
+  return <span className={`px-1.5 py-0.5 font-mono text-[10px] tracking-wider uppercase ${label.className}`}>{label.text}</span>;
 }
 
 export function Convert() {
@@ -170,30 +157,30 @@ export function Convert() {
   const current = items.findIndex((i) => i.status === "processing");
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8">
+    <div className="mx-auto max-w-4xl space-y-10">
       <header>
-        <h1 className="text-3xl font-semibold">Convert handwriting</h1>
-        <p className="mt-2 text-slate-600 dark:text-slate-400">Add photos in page order. You can reorder them before extracting.</p>
+        <p className="meta uppercase">Step 1 of 2 — add your pages</p>
+        <h1 className="mt-3 font-serif text-4xl sm:text-5xl">Convert handwriting</h1>
+        <p className="mt-3 max-w-xl text-ink-2">Add photos in page order. You can still reorder or remove them before reading.</p>
       </header>
 
-      <Dropzone onFiles={addFiles} disabled={busy || items.length >= MAX_FILES} hint={`JPG, PNG or WEBP · up to ${MAX_FILES} pages · 10 MB each`} />
+      <Dropzone onFiles={addFiles} disabled={busy || items.length >= MAX_FILES} hint={`JPG, PNG or WEBP — up to ${MAX_FILES} pages — 10 MB each`} />
 
       {items.length > 0 && (
-        <section aria-labelledby="pages-heading" className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 id="pages-heading" className="text-lg font-semibold">
-              Pages <span className="text-slate-500">({items.length})</span>
+        <section aria-labelledby="pages-heading" className="space-y-5">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-ink pb-3">
+            <h2 id="pages-heading" className="font-serif text-2xl">
+              {items.length} page{items.length === 1 ? "" : "s"} <span className="text-ink-3">ready</span>
             </h2>
             <button type="button" className="btn-primary" onClick={extract} disabled={busy}>
-              {busy ? <LoaderCircle className="size-4 animate-spin" aria-hidden /> : <ScanText className="size-4" aria-hidden />}
-              {busy ? "Extracting…" : "Extract text"}
+              {busy ? "Reading…" : "Extract text"}
             </button>
           </div>
 
           {busy && (
             <div className="space-y-2">
-              <p className="text-sm text-slate-600 dark:text-slate-400" aria-live="polite">
-                {current >= 0 ? `Reading page ${current + 1} of ${items.length}…` : "Finishing up…"}
+              <p className="meta" aria-live="polite">
+                {current >= 0 ? `Reading page ${current + 1} of ${items.length}` : "Finishing up"}
               </p>
               <div
                 role="progressbar"
@@ -201,47 +188,45 @@ export function Convert() {
                 aria-valuemin={0}
                 aria-valuemax={items.length}
                 aria-valuenow={done}
-                className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800"
+                className="h-0.5 bg-rule"
               >
-                <div className="h-full bg-brand-600 transition-all duration-500" style={{ width: `${(done / items.length) * 100}%` }} />
+                <div className="h-full bg-ink transition-all duration-500" style={{ width: `${(done / items.length) * 100}%` }} />
               </div>
             </div>
           )}
 
-          <ol className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+          <ol className="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 md:grid-cols-4">
             {items.map((item, index) => (
-              <li key={item.id} className="card overflow-hidden">
-                <div className="relative aspect-[3/4] bg-slate-100 dark:bg-slate-800">
-                  <img src={item.url} alt={`Page ${index + 1}: ${item.file.name}`} className={`size-full object-cover ${item.status === "processing" ? "animate-shimmer" : ""}`} />
-                  <span className="badge absolute left-2 top-2 bg-slate-900/75 text-white">{index + 1}</span>
-                  <span className="absolute right-2 top-2">
-                    <StatusBadge item={item} />
+              <li key={item.id}>
+                <div className="sheet relative aspect-[3/4] p-1.5">
+                  <img src={item.url} alt={`Page ${index + 1}: ${item.file.name}`} className="size-full object-cover" />
+                  <span className="absolute top-3 right-3">
+                    <StatusLabel status={item.status} />
                   </span>
                 </div>
-                <div className="space-y-2 p-2">
-                  <p className="truncate text-xs text-slate-600 dark:text-slate-400" title={item.file.name}>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="font-serif text-lg italic">{index + 1}</span>
+                  <span className="meta min-w-0 flex-1 truncate" title={item.file.name}>
                     {item.file.name}
-                  </p>
-                  {item.error && <p className="text-xs text-red-600 dark:text-red-400">{item.error}</p>}
-                  <div className="flex items-center justify-between">
-                    <div className="flex">
-                      <button type="button" className="btn-icon btn-ghost p-1.5" onClick={() => move(index, -1)} disabled={busy || index === 0} aria-label={`Move page ${index + 1} earlier`}>
-                        <ChevronLeft className="size-4" aria-hidden />
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-icon btn-ghost p-1.5"
-                        onClick={() => move(index, 1)}
-                        disabled={busy || index === items.length - 1}
-                        aria-label={`Move page ${index + 1} later`}
-                      >
-                        <ChevronRight className="size-4" aria-hidden />
-                      </button>
-                    </div>
-                    <button type="button" className="btn-icon btn-ghost p-1.5 hover:text-red-600" onClick={() => remove(item.id)} disabled={busy} aria-label={`Remove page ${index + 1}`}>
-                      <X className="size-4" aria-hidden />
-                    </button>
-                  </div>
+                  </span>
+                </div>
+                {item.error && <p className="mt-1 text-xs text-accent">{item.error}</p>}
+                <div className="mt-1 -ml-2.5 flex items-center text-[13px]">
+                  <button type="button" className="btn-ghost px-2 py-1" onClick={() => move(index, -1)} disabled={busy || index === 0} aria-label={`Move page ${index + 1} earlier`}>
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-ghost px-2 py-1"
+                    onClick={() => move(index, 1)}
+                    disabled={busy || index === items.length - 1}
+                    aria-label={`Move page ${index + 1} later`}
+                  >
+                    →
+                  </button>
+                  <button type="button" className="btn-ghost ml-auto px-2 py-1 hover:text-accent" onClick={() => remove(item.id)} disabled={busy} aria-label={`Remove page ${index + 1}`}>
+                    Remove
+                  </button>
                 </div>
               </li>
             ))}

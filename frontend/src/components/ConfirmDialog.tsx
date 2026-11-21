@@ -25,15 +25,15 @@ export function ConfirmDialog({ open, title, description, confirmLabel, onConfir
       onClose={onCancel}
       aria-labelledby="confirm-title"
       aria-describedby="confirm-description"
-      className="card m-auto w-[calc(100%-2rem)] max-w-md p-6 text-slate-900 backdrop:bg-slate-950/50 backdrop:backdrop-blur-sm dark:text-slate-100"
+      className="sheet m-auto w-[calc(100%-2rem)] max-w-md p-7 text-ink backdrop:bg-ink/40"
     >
-      <h2 id="confirm-title" className="text-lg font-semibold">
+      <h2 id="confirm-title" className="font-serif text-2xl">
         {title}
       </h2>
-      <p id="confirm-description" className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+      <p id="confirm-description" className="mt-2 text-sm text-ink-2">
         {description}
       </p>
-      <div className="mt-6 flex justify-end gap-3">
+      <div className="mt-7 flex justify-end gap-3">
         <button type="button" className="btn-secondary" onClick={onCancel} autoFocus>
           Cancel
         </button>

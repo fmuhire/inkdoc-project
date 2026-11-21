@@ -1,4 +1,3 @@
-import { Download, LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "../hooks/useToast";
 import { describeError, EXPORT_FORMATS, exportDocument, type ExportFormat } from "../lib/api";
@@ -9,7 +8,13 @@ interface Props {
   onExported: (format: ExportFormat) => void;
 }
 
-const FORMAT_LABELS: Record<ExportFormat, string> = { docx: "Word", pdf: "PDF", txt: "Text", md: "Markdown", html: "HTML" };
+const FORMATS: Record<ExportFormat, { label: string; note: string }> = {
+  docx: { label: "Word", note: "Edit in Word or Google Docs" },
+  pdf: { label: "PDF", note: "Fixed layout, ready to print" },
+  txt: { label: "Text", note: "Plain text, nothing else" },
+  md: { label: "Markdown", note: "For notes apps and wikis" },
+  html: { label: "HTML", note: "A standalone web page" },
+};
 const FONT_SIZES = [10, 11, 12, 14, 16, 18];
 
 function saveBlob(blob: Blob, filename: string) {
@@ -49,25 +54,24 @@ export function ExportPanel({ title, text, onExported }: Props) {
   };
 
   return (
-    <section className="card space-y-5 p-5" aria-labelledby="export-heading">
-      <h2 id="export-heading" className="text-base font-semibold">
+    <section className="space-y-6" aria-labelledby="export-heading">
+      <h2 id="export-heading" className="font-serif text-xl">
         Export
       </h2>
       <fieldset>
         <legend className="label">Format</legend>
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-3">
+        <div className="divide-y divide-rule border-y border-rule">
           {EXPORT_FORMATS.map((value) => (
-            <label
-              key={value}
-              className={`cursor-pointer rounded-lg border px-2 py-2 text-center text-xs font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500 ${
-                format === value
-                  ? "border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-200"
-                  : "border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
-              }`}
-            >
+            <label key={value} className="flex cursor-pointer items-center gap-3 py-2.5 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-accent">
               <input type="radio" name="format" value={value} checked={format === value} onChange={() => setFormat(value)} className="sr-only" />
-              {FORMAT_LABELS[value]}
-              <span className="block text-[10px] uppercase text-slate-500 dark:text-slate-400">.{value}</span>
+              <span className={`grid size-4 shrink-0 place-items-center rounded-full border ${format === value ? "border-ink" : "border-ink-3"}`} aria-hidden>
+                {format === value && <span className="size-2 rounded-full bg-ink" />}
+              </span>
+              <span className="flex-1">
+                <span className="text-sm font-medium">{FORMATS[value].label}</span>
+                <span className="block text-xs text-ink-3">{FORMATS[value].note}</span>
+              </span>
+              <span className="meta">.{value}</span>
             </label>
           ))}
         </div>
@@ -84,19 +88,18 @@ export function ExportPanel({ title, text, onExported }: Props) {
           ))}
         </select>
       </div>
-      <div className="space-y-2 text-sm">
-        <label className="flex items-center gap-2">
-          <input type="checkbox" className="size-4 accent-brand-600" checked={includeDate} onChange={(e) => setIncludeDate(e.target.checked)} />
-          Include today's date
+      <div className="space-y-2.5 text-sm">
+        <label className="flex items-center gap-2.5">
+          <input type="checkbox" className="size-4 accent-ink" checked={includeDate} onChange={(e) => setIncludeDate(e.target.checked)} />
+          Print today's date under the title
         </label>
-        <label className="flex items-center gap-2">
-          <input type="checkbox" className="size-4 accent-brand-600" checked={pageBreaks} onChange={(e) => setPageBreaks(e.target.checked)} />
-          Start each page on a new page
+        <label className="flex items-center gap-2.5">
+          <input type="checkbox" className="size-4 accent-ink" checked={pageBreaks} onChange={(e) => setPageBreaks(e.target.checked)} />
+          Start each page on a new sheet
         </label>
       </div>
-      <button type="button" className="btn-primary w-full" onClick={download} disabled={busy || !text.trim()}>
-        {busy ? <LoaderCircle className="size-4 animate-spin" aria-hidden /> : <Download className="size-4" aria-hidden />}
-        {busy ? "Preparing…" : `Download ${FORMAT_LABELS[format]}`}
+      <button type="button" className="btn-primary w-full py-2.5" onClick={download} disabled={busy || !text.trim()}>
+        {busy ? "Preparing file…" : `Download ${FORMATS[format].label}`}
       </button>
     </section>
   );

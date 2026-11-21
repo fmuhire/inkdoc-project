@@ -32,7 +32,7 @@ Many people still think best with a pen: students taking lecture notes, research
   - Filters by date range and export format
   - Sorting by newest, oldest, A–Z, or most/fewest words
   - A stats strip, plus open, rename, delete and clear all (all with confirmation dialogs)
-- **Polished UI:**
+- **Designed UI, "ink on paper":** an editorial notebook look with ruled sheets, serif type for documents, mono metadata and one vermilion accent.
   - Light and dark mode (persisted), responsive down to 360 px
   - Keyboard accessible with a skip link and visible focus rings
   - `aria-live` status messages, skeleton loading states, toasts and empty states
@@ -314,7 +314,7 @@ cd frontend && npm run typecheck && npm run build
 - Testing and tooling: [pytest](https://pytest.org), [RESPX](https://lundberg.github.io/respx/), [Ruff](https://docs.astral.sh/ruff/), [uv](https://docs.astral.sh/uv/)
 - Frontend: [React](https://react.dev), [Vite](https://vite.dev), [TypeScript](https://www.typescriptlang.org), [Tailwind CSS](https://tailwindcss.com), [React Router](https://reactrouter.com), [Lucide](https://lucide.dev)
 - Infrastructure: [nginx](https://nginx.org), [HAProxy](https://www.haproxy.org)
-- Font: [DejaVu Sans](https://dejavu-fonts.github.io) (license in `backend/app/assets/DejaVuSans-LICENSE.txt`)
+- Type: [Fraunces](https://fonts.google.com/specimen/Fraunces), [IBM Plex Sans and Mono](https://www.ibm.com/plex/) and [Caveat](https://fonts.google.com/specimen/Caveat), self-hosted via [Fontsource](https://fontsource.org); [DejaVu Sans](https://dejavu-fonts.github.io) for PDFs (license in `backend/app/assets/DejaVuSans-LICENSE.txt`)
 
 ## License
 
