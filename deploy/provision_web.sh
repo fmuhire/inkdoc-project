@@ -39,6 +39,7 @@ shred -u /tmp/inkdoc.env
 install -m 644 /tmp/inkdoc.service /etc/systemd/system/inkdoc.service
 systemctl daemon-reload
 systemctl enable inkdoc >/dev/null 2>&1
+systemctl try-restart inkdoc  # picks up a rotated key; no-op before the first deploy
 
 tar -czf "/root/nginx-backup-$stamp.tgz" -C /etc nginx
 install -m 644 /tmp/inkdoc.nginx /etc/nginx/sites-available/inkdoc
