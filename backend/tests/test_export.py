@@ -73,3 +73,9 @@ def test_invalid_requests_are_400(client, overrides):
     response = export(client, **overrides)
     assert response.status_code == 400
     assert response.json()["error"]["code"] == "bad_request"
+
+
+def test_accented_title_keeps_ascii_fallback(client):
+    header = export(client, title="Notes \u2013 été").headers["content-disposition"]
+    assert 'filename="Notes_ete.txt"' in header
+    assert "filename*=UTF-8''Notes%20%C3%A9t%C3%A9.txt" in header

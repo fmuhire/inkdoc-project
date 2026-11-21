@@ -1,0 +1,23 @@
+[Unit]
+Description=InkDoc API (gunicorn + uvicorn)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=inkdoc
+Group=inkdoc
+WorkingDirectory=/opt/inkdoc/backend
+# One worker keeps the OCR cache and rate limiter in a single process per server.
+ExecStart=/opt/inkdoc/backend/.venv/bin/gunicorn app.main:app \
+    --worker-class uvicorn_worker.UvicornWorker --workers 1 \
+    --bind 127.0.0.1:8000 --timeout 180 --graceful-timeout 30 \
+    --access-logfile -
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

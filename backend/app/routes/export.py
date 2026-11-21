@@ -1,4 +1,5 @@
 import re
+import unicodedata
 from datetime import date
 from typing import Literal
 from urllib.parse import quote
@@ -29,8 +30,9 @@ class ExportRequest(BaseModel):
 
 
 def content_disposition(title: str, ext: str) -> str:
-    stem = re.sub(r"[^\w\- ]+", "", title).strip() or "inkdoc"
-    ascii_stem = re.sub(r"\s+", "_", stem.encode("ascii", "ignore").decode()).strip("_") or "inkdoc"
+    stem = re.sub(r"\s+", " ", re.sub(r"[^\w\- ]+", "", title)).strip() or "inkdoc"
+    ascii_only = unicodedata.normalize("NFKD", stem).encode("ascii", "ignore").decode()
+    ascii_stem = re.sub(r"\s+", "_", ascii_only).strip("_") or "inkdoc"
     return f"attachment; filename=\"{ascii_stem}.{ext}\"; filename*=UTF-8''{quote(stem)}.{ext}"
 
 
