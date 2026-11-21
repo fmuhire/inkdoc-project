@@ -1,0 +1,11 @@
+cachetools==8.0.2
+fastapi==0.165.0
+fpdf2==2.9.0
+gunicorn==27.0.1
+httpx==0.28.1
+pillow==13.0.0
+pydantic-settings==2.16.3
+python-docx==1.2.0
+python-multipart==0.0.34
+slowapi==0.1.10
+uvicorn[standard]==0.54.0
