@@ -79,8 +79,7 @@ inkdoc/
 │   └── tests/          pytest + respx (upstream API mocked)
 ├── frontend/           React + Vite + TypeScript + Tailwind v4
 │   └── src/{components,pages,lib,hooks}
-├── deploy/             nginx.conf, haproxy.cfg, inkdoc.service, provision + deploy scripts
-└── .github/workflows/ci.yml
+└── deploy/             nginx.conf, haproxy.cfg, inkdoc.service, provision + deploy scripts
 ```
 
 ## Run it locally
@@ -287,14 +286,12 @@ If a quota, key or rate-limit error occurs, InkDoc stops calling the API for the
 - **Connection reuse:** one shared async `httpx` client per process.
 - **Frontend delivery:** gzip, year-long immutable caching for fingerprinted assets, and a single ~117 KB gzipped JS bundle.
 
-## CI
+## Checks
 
-`.github/workflows/ci.yml` runs on every push and pull request:
+- **Backend:** `ruff check`, `ruff format --check` and `pytest` (40 tests; the Pen to Print API is mocked with respx).
+- **Frontend:** `tsc --noEmit` and `vite build`.
 
-- **Backend (Python 3.12):** `ruff check`, `ruff format --check` and `pytest` (40 tests; the Pen to Print API is mocked with respx).
-- **Frontend (Node 22):** `npm ci`, `tsc --noEmit` and `vite build`.
-
-Run the same checks locally:
+Run them locally:
 
 ```bash
 cd backend && ruff check . && pytest
