@@ -3,7 +3,7 @@
 **Turn photos of handwritten pages into editable text, then export them as Word, PDF, Markdown, HTML or plain text.**
 
 - **Live:** http://34.205.73.55 (HAProxy load balancer in front of two web servers)
-- **Demo video: https://drive.google.com/file/d/1iNqYI1Oj2foTn36TsVjVRCMZKzUdkl_a/view?usp=sharing
+- **Demo video:** https://drive.google.com/file/d/1iNqYI1Oj2foTn36TsVjVRCMZKzUdkl_a/view?usp=sharing
 - **Demo script:** [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)
 
 ---
