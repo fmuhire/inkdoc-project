@@ -3,14 +3,14 @@
 **Turn photos of handwritten pages into editable text, then export them as Word, PDF, Markdown, HTML or plain text.**
 
 - **Live:** http://34.205.73.55 (HAProxy load balancer in front of two web servers)
-- **Demo video:** DEMO_VIDEO_URL
+- **Demo video: https://drive.google.com/file/d/1iNqYI1Oj2foTn36TsVjVRCMZKzUdkl_a/view?usp=sharing
 - **Demo script:** [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)
 
 ---
 
 ## The problem and who it's for
 
-Many people still think best with a pen: students taking lecture notes, researchers filling field notebooks, teams sketching in meetings. Sharing those notes means retyping them, which is slow and error-prone. InkDoc removes that step: photograph the pages, fix anything the OCR misread, and download a clean document.
+Many people still think best with a pen: students taking lecture notes, researchers filling fields notebooks, teams sketching in meetings. Sharing those notes means retyping them, which is slow and error-prone. InkDoc removes that step: photograph the pages, fix anything the OCR misread, and download a clean document.
 
 **Users:** students submitting or sharing notes, researchers digitising notebooks, and anyone who wants searchable copies of handwritten pages.
 
@@ -36,12 +36,6 @@ Many people still think best with a pen: students taking lecture notes, research
   - Light and dark mode (persisted), responsive down to 360 px
   - Keyboard accessible with a skip link and visible focus rings
   - `aria-live` status messages, skeleton loading states, toasts and empty states
-
-## Screenshots
-
-| Home | Editor | History |
-| --- | --- | --- |
-| ![Home](docs/screenshots/home.png) | ![Editor](docs/screenshots/editor.png) | ![History](docs/screenshots/history.png) |
 
 
 ## Architecture
@@ -299,8 +293,13 @@ cd frontend && npm run typecheck && npm run build
 ```
 
 ## Challenges
+1. Long OCR uploads timing out. When I uploaded several pages at once, the request was cut off before the OCR finished, because each page can take up to 30 seconds and nginx and HAProxy gave up sooner by default. I raised the timeout to 180 seconds in nginx, gunicorn and HAProxy so they all wait the same amount of time, and increased nginx's upload size limit so ten photos fit in one request.
 
-> **TODO (author):** describe the challenges you faced and how you solved them.
+2. Running out of API calls. The Pen to Print API has a daily limit, and while testing I used it up quickly by uploading the same photos again and again. I added a cache: each image is fingerprinted (SHA-256), and if the same page comes back within 24 hours the saved text is returned without calling the API. InkDoc also stops sending the remaining pages as soon as the API reports the quota is used up. I added a rate limit as well, but behind the load balancer every request seemed to come from the same IP, so I had to read the real client IP from the X-Forwarded-For header in a way users can't fake.
+
+3. Old Python on the servers. The web servers run Ubuntu 20.04, which only comes with Python 3.8, but the backend needs Python 3.11 or newer. Replacing the system Python could break Ubuntu's own tools, so my provisioning script uses uv to install a separate Python 3.12 in /opt/python and builds the app's virtual environment from it.
+
+4. Deploying without taking the site down. Updating both servers at the same time meant the site was briefly unavailable. My deploy script now updates one server at a time: it restarts web-01, waits until /api/health returns 200, and only then moves on to web-02. HAProxy's health checks send all traffic to the other server while one is restarting, so users never notice the update.
 
 ## Credits
 
@@ -312,6 +311,9 @@ cd frontend && npm run typecheck && npm run build
 - Infrastructure: [nginx](https://nginx.org), [HAProxy](https://www.haproxy.org)
 - Type: [Fraunces](https://fonts.google.com/specimen/Fraunces), [IBM Plex Sans and Mono](https://www.ibm.com/plex/) and [Caveat](https://fonts.google.com/specimen/Caveat), self-hosted via [Fontsource](https://fontsource.org); [DejaVu Sans](https://dejavu-fonts.github.io) for PDFs (license in `backend/app/assets/DejaVuSans-LICENSE.txt`)
 
-## License
+Author
 
-[MIT](LICENSE)
+Muhire Fidel
+  Github: @fmuhire
+  
+
